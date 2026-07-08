@@ -813,17 +813,9 @@ T_yyy2_f = f"-60*{P}B3*{P}B5*{P}B10*({P}B13^2-7*{P}B10^2)/{P}B13^9"
 Tzz_dy_f = f"12*{P}B3*{P}B5*{P}B10*(35*{P}B11^2-5*{P}B13^2)/{P}B13^9"
 # 2 * (∂T_xy/∂y) = T_xyy (already have)
 J63ref = "D9"; J73ref = "D10"; J83ref = "D11"
-J10_dy = (
-    f"({T_xxy_f})*{ux2}+({T_yyy_f})*{uy2}+({Tzz_dy_f})*{uz2}"
-    f"+2*{T_xyy}*{ux}*{uy}"
-    f"+{Txx}*{J63ref}+{Txy}*{J73ref}+{Txz}*{J83ref}"
-    f"+{Tx}*{J63ref}+{Ty}*{J73ref}+{Tz}*{J83ref}"
-)
-# Note: above double-counts T contributions — fix:
-# The correct split is:
-#   Σ_{spatial} ∂(T_{αβ} uα uβ)/∂y  +  ∂(T_x f6 + T_y f7 + T_z f8)/∂y
-# = [∂T_xx/∂y·u^x² + ∂T_yy/∂y·u^y² + ∂T_zz/∂y·u^z² + 2∂T_xy/∂y u^x u^y + ...]
-# + [T_xy f6 + T_x J63] + [T_yy f7 + T_y J73] + [T_yz f8 + T_z J83]
+# ∂f₁₀/∂y: split into torsion-gradient quadratic terms and product-rule coupling.
+# ∂(T_{αβ} uα uβ)/∂y gives the first four terms;
+# ∂(T_x f6 + T_y f7 + T_z f8)/∂y = T_xy f6 + T_x J63 + T_yy f7 + T_y J73 + T_yz f8 + T_z J83
 J10_dy = (
     f"({T_xxy_f})*{ux2}+({T_yyy_f})*{uy2}+({Tzz_dy_f})*{uz2}"
     f"+2*({T_yyy2_f})*{ux}*{uy}"
@@ -901,7 +893,9 @@ for ri, jrow in enumerate(all_rows, start=4):
         c.number_format = "0.000000E+00"
         c.font      = _font(size=9)
 
-# Highlight diagonal (approximate identity block) in orange
+# Highlight the unit-coupling cells (identity kinematic block: position↔velocity and T↔Ṫ).
+# These are the entries J[f_pos, u] = 1 and J[f_T, Ṫ] = 1, not the main diagonal,
+# because the state vector orders positions before velocities.
 diag_pairs = [(4,6), (5,7), (6,8), (7,9), (12,11)]  # (row, col)
 for rr, cc in diag_pairs:
     wj.cell(row=rr, column=cc).fill = _fill(C_DIAGONAL)
