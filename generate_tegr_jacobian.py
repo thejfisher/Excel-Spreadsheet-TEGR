@@ -896,8 +896,8 @@ for ri, jrow in enumerate(all_rows, start=4):
 # Highlight the unit-coupling cells (identity kinematic block: position↔velocity and T↔Ṫ).
 # These are the entries J[f_pos, u] = 1 and J[f_T, Ṫ] = 1, not the main diagonal,
 # because the state vector orders positions before velocities.
-diag_pairs = [(4,6), (5,7), (6,8), (7,9), (12,11)]  # (row, col)
-for rr, cc in diag_pairs:
+unit_coupling_pairs = [(4,6), (5,7), (6,8), (7,9), (12,11)]  # (row, col)
+for rr, cc in unit_coupling_pairs:
     wj.cell(row=rr, column=cc).fill = _fill(C_DIAGONAL)
 
 # Freeze pane
